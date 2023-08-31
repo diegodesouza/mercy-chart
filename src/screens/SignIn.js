@@ -1,43 +1,28 @@
 import * as React from 'react';
-import * as SecureStore from 'expo-secure-store';
 import { StyleSheet, View, } from 'react-native';
 
-// Import for the UI library
 import { PaperProvider, Button, Text, TextInput } from 'react-native-paper';
 
-// This function will check if the stored login/password are valid
-async function getValueFor(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-        // Insert Logic to display the login page
-        console.log(result);
-    } else {
-        // return to signup if it didn't register
-        console.log('Error');
-    }
-}
+export default function SignIn({ navigation }) {
 
-export default function Home({ navigation }) {
-
-    const [login, setLogin] = React.useState('');
+    const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
 
     return (
         <PaperProvider>
             <View style={{ flex: 1, backgroundColor: '#F1E6E0' }}>
-                <Text variant="displaySmall" style={styles.logo}>Rulito</Text>
+                <Text variant="displaySmall" style={styles.header}>Sign In</Text>
 
                 <View style={styles.container}>
                     <TextInput
                         mode='outlined'
-                        label="Login"
-                        value={login}
+                        label="Email"
+                        value={email}
                         clearTextOnFocus
-                        onChangeText={login => setLogin(login)}
+                        onChangeText={email => setEmail(email)}
                         outlineStyle={{ borderRadius: 20, borderColor: '#fff' }}
                         selectionColor='#F19336'
                         style={{ marginBottom: 5 }}
-                    // onSubmitEditing={event => { getValueFor(event.nativeEvent.text) }}
                     />
                     <TextInput
                         mode='outlined'
@@ -46,7 +31,6 @@ export default function Home({ navigation }) {
                         secureTextEntry
                         onChangeText={password => setPassword(password)}
                         outlineStyle={{ borderRadius: 20, borderColor: '#fff' }}
-                    // onSubmitEditing={event => { getValueFor(event.nativeEvent.text) }}
                     />
                     <Button
                         mode="text"
@@ -59,23 +43,22 @@ export default function Home({ navigation }) {
                     <Button
                         mode="contained"
                         buttonColor='#F19336'
-                        labelStyle={{ fontWeight: 700 }}
+                        labelStyle={{ fontWeight: 700, fontSize: 20 }}
                         style={{ marginTop: 20 }}
-                        onPress={() => getValueFor}>
-                        GO
+                        onPress={() => { }}>
+                        Sign In
                     </Button>
 
-                    <View style={{ alignItems: 'center', flexDirection: 'row', alignSelf: 'center', }}>
+                    <View style={styles.bottomTxtContainer}>
                         <Text style={{ fontWeight: 700, color: '#757575' }}>
                             Don't have an account yet?
                         </Text>
-
                         <Button
                             mode="text"
                             textColor='#F19336'
                             compact
                             labelStyle={{ fontWeight: 700, alignSelf: 'flex-end', }}
-                            onPress={() => navigation.navigate('Signup')}>
+                            onPress={() => navigation.navigate('SignUp')}>
                             Sign Up
                         </Button>
                     </View>
@@ -90,13 +73,18 @@ const styles = StyleSheet.create({
         flex: 3,
         margin: 30,
     },
-
-    logo: {
+    header: {
         flex: 1,
         paddingTop: '40%',
         textAlign: 'center',
         fontWeight: 600,
         color: '#F19336',
-    }
+    },
+    bottomTxtContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        alignSelf: 'center',
+        marginTop: 90
+    },
 })
 

@@ -7,8 +7,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { PaperProvider } from 'react-native-paper';
 
 // PAGE IMPORTS //
-import HomeScreen from './Home';
-import Signup from './Signup';
+import SignIn from './src/screens/SignIn';
+import SignUp from './src/screens/SignUp';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,9 +18,9 @@ export default function App() {
         <PaperProvider>
             <NavigationContainer>
                 <Stack.Navigator >
-                    <Stack.Screen name="Home" component={HomeScreen}
+                    <Stack.Screen name="SignIn" component={SignIn}
                         options={styles.header} />
-                    <Stack.Screen name="Signup" component={Signup} options={styles.headerWithNav} />
+                    <Stack.Screen name="SignUp" component={SignUp} options={styles.headerWithNav} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>

@@ -1,51 +1,53 @@
 import React from 'react';
-import {makeAutoObservable, runInAction} from 'mobx';
-import {ref, set, get} from "firebase/database";
+import {makeAutoObservable} from 'mobx';
+import {ref, set, push, onValue} from "firebase/database";
 import {FIREBASE_DB} from "../config/firebase.config";
 import {commonStore} from "./CommonStore";
-import Strike from "./models/Strike";
+import Strikes from "./models/Strikes";
 
 class StrikeStore {
     strikes = []
     strikeIndex = -1;
+    currentStrikeId = '';
+
     constructor() {
         makeAutoObservable(this)
+        this.strikes = new Strikes().generateStrikes();
     }
 
-    getStrikes = async (childId) => {
+    // getStrikes = async (childId) => {
+    //     console.log('child', childId)
+    //     try {
+    //         commonStore.handleCommonStore('isLoading', true)
+    //         await get(ref(FIREBASE_DB, `strikes/${childId}`))
+    //             .then(snap => {
+    //                 console.log('snap', snap)
+    //                 if (snap.exists()) {
+    //                     this.handleChangeStrikeStore('strikes', ...Object.keys(snap.val()).map(strike => strike))
+    //                     console.log('strikes', this.strikes)
+    //                 } else {
+    //                     runInAction(() => {
+    //                         const strikes = new Strikes()
+    //                         this.strikes = strikes.generateStrikes(childId)
+    //                         console.log('strikes 2', this.strikes)
+    //                     })
+    //                 }
+    //             })
+    //     } catch (e) {
+    //         console.log(e)
+    //     } finally {
+    //         commonStore.handleCommonStore('isLoading', false)
+    //     }
+    // }
+
+    addStrike = async (childId) => {
         try {
             commonStore.handleCommonStore('isLoading', true)
-            await get(ref(FIREBASE_DB, `strikes/${childId}`))
+            const strikes = new Strikes();
+            await set(ref(FIREBASE_DB,`strikes/${childId}/${new Date()}`), strikes.generateStrikes(childId))
                 .then(snap => {
-                    if (snap.val()) {
-                        this.handleChangeStrikeStore('strikes', snap.val())
-                    } else {
-                        for (let i = 0; i < 3; i++) {
-                            runInAction(() => {
-                                this.strikes.push(new Strike({index: i}))
-                            })
-                        }
-                    }
+                    console.log('span>>>', snap)
                 })
-        } catch (e) {
-            console.log(e)
-        } finally {
-            commonStore.handleCommonStore('isLoading', false)
-        }
-    }
-
-    setStrike = async (childId) => {
-        try {
-            commonStore.handleCommonStore('isLoading', true)
-            this.handleChangeStrikeStore('strikes',
-                this.strikes.map((s, i) => {
-                    if (this.strikeIndex === i) {
-                        s.strike = true
-                    }
-                    return s;
-                })
-            )
-            await set(ref(FIREBASE_DB, `strikes/${childId}`), this.strikes)
         } catch (error) {
             console.log('error', error)
         } finally {
@@ -53,11 +55,57 @@ class StrikeStore {
         }
     }
 
+    updateStrike = async (childId) => {
+        try {
+            commonStore.handleCommonStore('isLoading', true)
+            this.handleChangeStrikeStore('strikes',
+                this.strikes?.map((s, i) => {
+                    if (this.strikeIndex === i && !this.strikeIndex > 2) {
+                        s.strike = true
+                    }
+                    return s;
+                })
+            )
+            const strikesRef = ref(FIREBASE_DB, `strikes/${childId}`)
+            await set(strikesRef, this.strikes)
+            onValue(strikesRef, (snapshot) => {
+                console.log('snapshot', snapshot)
+            })
+            // const refKey = push().key
+            // if (refKey && refKey === this.currentStrikeId) {
+            //     this.handleChangeStrikeStore('currentStrikeId', refKey)
+            // }
+        } catch (error) {
+            console.log('error', error)
+        } finally {
+            commonStore.handleCommonStore('isLoading', false)
+        }
+    }
+
+    // updateStrike = async (childId) => {
+    //     try {
+    //         commonStore.handleCommonStore('isLoading', true)
+    //         this.handleChangeStrikeStore('strikes',
+    //             this.strikes?.map((s, i) => {
+    //                 if (this.strikeIndex === i && !this.strikeIndex > 2) {
+    //                     s.strike = true
+    //                 }
+    //                 return s;
+    //             })
+    //         )
+    //         await set(ref(FIREBASE_DB, `strikes/${childId}`), this.strikes)
+    //     } catch (error) {
+    //         console.log('error', error)
+    //     } finally {
+    //         commonStore.handleCommonStore('isLoading', false)
+    //     }
+    // }
+
     deleteStrike = async (childId) => {
         try {
             commonStore.handleCommonStore('isLoading', true)
             this.handleChangeStrikeStore('strikes',
-                this.strikes.map((s, i) => {
+                this.strikes?.map((s, i) => {
                     if (this.strikeIndex === i) {
                         s.strike = false
                     }

@@ -1,7 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getDatabase } from 'firebase/database';
-import { ref, getStorage } from "firebase/storage";
+// import { getDatabase } from 'firebase/database';
+import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
+
 
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 
@@ -28,7 +30,8 @@ const FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
 });
 
 // const FIREBASE_AUTH = getAuth(FIREBASE_APP);
-const FIREBASE_DB = getDatabase(FIREBASE_APP);
+// const FIREBASE_DB = getDatabase(FIREBASE_APP);
+const FIREBASE_DB = getFirestore(FIREBASE_APP)
 
 const FIREBASE_STORAGE = getStorage(FIREBASE_APP);
 

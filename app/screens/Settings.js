@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 const Settings = () => {
     const [modalVisible, setModalVisible] = React.useState()
-    const { signOut } = useAuthenticationStore();
+    const { signOut, deleteUser} = useAuthenticationStore();
     const navigation = useNavigation();
     const showModalDelete = () => setModalVisible(true);
     const hideModalDelete = () => setModalVisible(false);
@@ -16,7 +16,7 @@ const Settings = () => {
             <Portal>
                 <Modal visible={modalVisible} onDismiss={hideModalDelete} style={styles.modalContainer} >
                     <Text style={styles.modalTxt}>Are you sure you want to delete your account?</Text>
-                    <Button mode='contained' buttonColor='#757575' >Yes</Button>
+                    <Button mode='contained' buttonColor='#757575' onPress={() => deleteUser()}>Yes</Button>
                     <Button mode='contained' buttonColor='#F19336' style={{ marginTop: 15 }}>No</Button>
                 </Modal>
             </Portal>

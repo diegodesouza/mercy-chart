@@ -4,13 +4,15 @@ export default class Strike {
     index = null;
     strike = false;
     icon = '';
-    createdDate = null;
+    createdAt= null;
+    updatedAt= null;
 
     constructor(init) {
         this.uid = init?.uid || uuid.v4();
         this.index = init?.index;
         this.strike = init?.strike || false;
         this.icon = init?.icon || 'circle';
-        this.createdDate = new Date();
+        this.createdAt = init?.createdAt || new Date();
+        this.updatedAt = init?.updatedAt || new Date();
     }
 }

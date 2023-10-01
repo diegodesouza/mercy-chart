@@ -1,11 +1,12 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
-import { get, set, push, update, ref, onValue, child } from "firebase/database";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { get, set, ref } from "firebase/database";
 import { FIREBASE_DB } from "../config/firebase.config";
 import {commonStore} from "./CommonStore";
 
 class UserStore {
-    user = {};
+    currentUserId = {};
 
     constructor() {
         makeAutoObservable(this)
@@ -36,11 +37,14 @@ class UserStore {
     setUser = async (userId, user) => {
         try {
             commonStore.handleCommonStore('isLoading', true)
-            return await set(ref(FIREBASE_DB, `users/${userId}`), {
+            const userRef = doc(FIREBASE_DB, 'users', userId)
+
+            await setDoc(userRef,  {
                 email: user.email,
                 uid: user.uid,
                 displayName: user.displayName
-            })
+            }, { capital: true }, { merge: true })
+            this.handleChangeUserStore('currentUserId', userRef.id)
         } catch (error) {
             console.log('error', error)
         } finally {
@@ -62,6 +66,11 @@ class UserStore {
         } catch (e) {
             console.log('UpdateUserError ------> ', e.message);
         }
+    }
+
+    handleChangeUserStore = (key, value) => {
+        if (!key && !value) return;
+        this[key] = value;
     }
 }
 

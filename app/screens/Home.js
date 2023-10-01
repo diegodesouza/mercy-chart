@@ -9,6 +9,7 @@ import {useStrikeStore} from "../stores/StrikeStore";
 import {useEffect} from "react";
 import {useChildStore} from "../stores/ChildStore";
 import {useAuthenticationStore} from "../stores/AuthenticationStore";
+import Strikes from "../stores/models/Strikes";
 
 const Chart = () => {
     const strikeStore = useStrikeStore()
@@ -19,8 +20,9 @@ const Chart = () => {
     const {
         strikes,
         strikeIndex,
+        addStrike,
         getStrikes,
-        setStrike,
+        updateStrike,
         deleteStrike,
         handleChangeStrikeStore,
     } = strikeStore
@@ -31,16 +33,17 @@ const Chart = () => {
         .runOnJS(true)
         .onStart( () => {
             handleChangeStrikeStore('strikeIndex', strikeIndex + 1)
-            setStrike(child.uid)
+            updateStrike(child.uid)
         });
 
     const RemoveIcon = () => <IconButton icon='minus-circle' size={75} iconColor="#757575"/>
 
-    useEffect(() => {
-        getChildren(user.uid).then(() => {
-            getStrikes(child.uid)
-        })
-    }, []);
+    // useEffect(() => {
+        // getChildren(user.uid).then(() => {
+        //     getStrikes(child.uid)
+        // })
+        // new Strikes().generateStrikes()
+    // }, []);
 
     return (
         <PaperProvider>
@@ -52,7 +55,18 @@ const Chart = () => {
                             <Text style={styles.hourTxt}>01:12:00 Hour</Text>
                             <Text>Remaining for the reward</Text>
                         </View>
-                        <IconButton icon='timer' iconColor='#757575' onPress={() => { }} />
+                        <IconButton
+                            icon='timer'
+                            iconColor='#757575'
+                            onPress={() => { }}
+                        />
+                        <IconButton
+                            icon='shape-rectangle-plus'
+                            iconColor='#757575'
+                            onPress={() => {
+                                addStrike(child.uid)
+                            }}
+                        />
                     </View>
                     <IconButton
                         icon='gift'
@@ -69,13 +83,13 @@ const Chart = () => {
                         <View style={styles.xContainer}>
                             {
                                 strikes &&
-                                strikes.length > 0 &&
-                                strikes.map(strike => (
+                                strikes?.length > 0 &&
+                                strikes?.map(strike => (
                                     <IconButton
                                         key={strike?.uid}
                                         index={strike?.index}
                                         id={strike?.uid}
-                                        icon={strike.strike ? 'close-circle-outline' : strike?.icon}
+                                        icon={strike?.strike ? 'close-circle-outline' : strike?.icon}
                                         size={60}
                                         iconColor='#FFF'
                                     />

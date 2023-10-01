@@ -28,7 +28,6 @@ class ChildStore {
                     runInAction(() => {
                         this.children = Object.values(childrenSnapshot.val()).filter(child => {
                                 if (child.userId === userId) {
-                                    console.log('3')
                                     return child
                                 }
                             })

@@ -4,11 +4,13 @@ export default class Child {
     name= null;
     userId = null;
     avatarURL = null;
+    currentStrikeId = null;
 
     constructor(init) {
         this.uid = init?.uid || uuid.v4();
         this.name = init?.name;
         this.userId = init?.userId;
         this.avatarURL = init?.avatarURL
+        this.currentStrikeId = init?.currentStrikeId
     }
 }

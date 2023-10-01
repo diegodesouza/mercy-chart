@@ -2,14 +2,17 @@ import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
 import { FIREBASE_AUTH } from "../config/firebase.config";
 import {
+    deleteUser,
     signOut,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     updateProfile,
+    reauthenticateWithCredential,
+    EmailAuthProvider,
 } from 'firebase/auth';
 import User from "./models/User";
 import { userStore } from "./UserStore";
-import {commonStore} from "./CommonStore";
+import { commonStore } from "./CommonStore";
 
 class AuthenticationStore {
     user = {};
@@ -37,14 +40,16 @@ class AuthenticationStore {
         'auth/missing-password': 'Missing Password.',
         'auth/missing-email': 'Missing Email.',
         'auth/user-not-found': 'User Not Found.',
-        'auth/email-already-in-use': 'An account with this email already exists.'
+        'auth/email-already-in-use': 'An account with this email already exists.',
+        'auth/requires-recent-login': 'You need to Reauthenticate in order to do this action'
     }
 
     signIn = async (email, password) => {
+        this.handleChangeAuthenticationStore('password', password)
         commonStore.handleCommonStore('isLoading', true)
         signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
             .then((response) => {
-                this.handleChangeAuthenticationStore('user', response.user)
+                this.handleChangeAuthenticationStore('user', {...response.user, password})
                 this.handleChangeAuthenticationStore('isSignedIn', true)
                 this.handleChangeAuthenticationStore('signInFailed', false)
                 return response;
@@ -70,7 +75,6 @@ class AuthenticationStore {
                     updateProfile(user, { displayName: name, })
                         .then(()=> {
                             setUser(user.uid, new User(user))
-                                .catch((error) => console.log(error))
                         })
                         .catch((error) => console.log(error))
                     this.handleChangeAuthenticationStore('signUpFailed', false)
@@ -95,10 +99,25 @@ class AuthenticationStore {
             await signOut(FIREBASE_AUTH)
             this.handleChangeAuthenticationStore('isSignedIn', false)
         } catch (error) {
-            this.handleChangeAuthenticationStore('isSignedIn', true)
             console.log('error', error)
         } finally {
             console.log('signed out')
+        }
+    }
+
+    deleteUser = async () => {
+        try {
+            commonStore.handleCommonStore('isLoading', true)
+            await deleteUser(this.user);
+        } catch (error) {
+            if (error.code === 'auth/requires-recent-login') {
+                const credential = EmailAuthProvider.credential(this.user.email, this.password);
+                await reauthenticateWithCredential(this.user, credential)
+            }
+            console.log('error', error)
+        } finally {
+            console.log('signed out')
+            commonStore.handleCommonStore('isLoading', false)
         }
     }
 

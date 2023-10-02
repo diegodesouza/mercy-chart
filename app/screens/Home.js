@@ -6,22 +6,16 @@ import { IconButton, PaperProvider, Text } from 'react-native-paper';
 import TopBar from '../components/TopBar'
 import SwipeButton from 'rn-swipe-button';
 import {useStrikeStore} from "../stores/StrikeStore";
-import {useEffect} from "react";
 import {useChildStore} from "../stores/ChildStore";
-import {useAuthenticationStore} from "../stores/AuthenticationStore";
-import Strikes from "../stores/models/Strikes";
 
 const Chart = () => {
     const strikeStore = useStrikeStore()
     const childStore = useChildStore();
-    const authenticationStore = useAuthenticationStore();
-    const { user } = authenticationStore;
-    const { child, getChildren} = childStore;
+    const { child} = childStore;
     const {
         strikes,
         strikeIndex,
         addStrike,
-        getStrikes,
         updateStrike,
         deleteStrike,
         handleChangeStrikeStore,
@@ -37,13 +31,6 @@ const Chart = () => {
         });
 
     const RemoveIcon = () => <IconButton icon='minus-circle' size={75} iconColor="#757575"/>
-
-    // useEffect(() => {
-        // getChildren(user.uid).then(() => {
-        //     getStrikes(child.uid)
-        // })
-        // new Strikes().generateStrikes()
-    // }, []);
 
     return (
         <PaperProvider>

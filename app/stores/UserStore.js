@@ -1,7 +1,6 @@
 import {createContext, useContext} from 'react';
 import {makeAutoObservable} from 'mobx';
-import { collection, setDoc, doc, getDoc, getDocs } from "firebase/firestore";
-import { get, set, ref } from "firebase/database";
+import { collection, setDoc, doc, getDoc, getDocs, updateDoc  } from "firebase/firestore";
 import { FIREBASE_DB } from "../config/firebase.config";
 import {commonStore} from "./CommonStore";
 
@@ -37,10 +36,9 @@ class UserStore {
             const userRef = doc(FIREBASE_DB, 'users', userId);
             const userSnapshot = await getDoc(userRef)
             if (userSnapshot.exists()) {
-                console.log("Document data:", userSnapshot.data());
                 this.handleChangeUserStore('user', userSnapshot.data())
+                return this.user
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         } catch (error) {
@@ -58,7 +56,8 @@ class UserStore {
             await setDoc(userRef,  {
                 email: user.email,
                 uid: user.uid,
-                displayName: user.displayName
+                displayName: user.displayName,
+                selectedChildId: user?.selectedChildId
             }, { merge: true })
             this.handleChangeUserStore('currentUserId', userRef.id)
         } catch (error) {
@@ -68,11 +67,17 @@ class UserStore {
         }
     }
 
-    updateUser = async (user) => {
+    updateUser = async (userId, user) => {
         try {
-            // update user
+            commonStore.handleCommonStore('isLoading', true)
+            const userRef = doc(FIREBASE_DB, "users", userId);
+            await updateDoc(userRef, {
+                selectedChildId: user.selectedChildId
+            });
         } catch (e) {
             console.log('UpdateUserError ------> ', e.message);
+        } finally {
+            commonStore.handleCommonStore('isLoading', false)
         }
     }
 

@@ -1,16 +1,18 @@
 import React from 'react';
-import {makeAutoObservable, runInAction, toJS} from 'mobx';
-import {get, ref, set} from "firebase/database";
+import {makeAutoObservable, runInAction} from 'mobx';
 import { collection, setDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import {FIREBASE_DB} from "../config/firebase.config";
 import {storageStore} from './StorageStore'
 import {commonStore} from "./CommonStore";
 import Child from "./models/Child";
+import {userStore} from "./UserStore";
 
 class ChildStore {
     children = []
 
     child = {}
+
+    selectedChildId = ''
 
     constructor() {
         makeAutoObservable(this)
@@ -37,16 +39,15 @@ class ChildStore {
     }
 
     getChild = async (childId) => {
+        const {updateUser, user} = userStore;
         try {
             commonStore.handleCommonStore('isLoading', true)
-            // this.handleChangeChildStore('child' , await get(ref(FIREBASE_DB, `children/${childId}`)))
             const childrenRef = doc(FIREBASE_DB, 'children', childId);
             const childrenSnapshot = await getDoc(childrenRef)
             if (childrenSnapshot.exists()) {
-                console.log("Document data:", childrenSnapshot.data());
-                this.handleChangeChildStore('user', childrenSnapshot.data())
+                this.handleChangeChildStore('child', childrenSnapshot.data())
+                await updateUser(user.uid, {selectedChildId: childId})
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         } catch (error) {
@@ -70,12 +71,7 @@ class ChildStore {
                         })
                         const childRef = doc(FIREBASE_DB, 'children', child.uid);
                         await setDoc(childRef, Object.assign({}, _child))
-                        this.handleChangeChildStore('currentChildId', childRef.id)
-                        // await set(ref(FIREBASE_DB, `children/${child.uid}/`),
-                        //     { ..._child })
-                        //     .then(() => {
-                        //         this.handleChangeChildStore('child', _child)
-                        //     })
+                        this.handleChangeChildStore('selectedChildId', childRef.id)
                     }
                 })
         } catch (error) {
@@ -100,7 +96,7 @@ class ChildStore {
 }
 
 // Instantiate the counter store.
-const childStore = new ChildStore();
+export const childStore = new ChildStore();
 // Create a React Context with the counter store instance.
 export const ChildStoreContext = React.createContext(childStore);
 export const useChildStore = () => React.useContext(ChildStoreContext)

@@ -1,5 +1,5 @@
 import {createContext, useContext} from 'react';
-import {makeAutoObservable} from 'mobx';
+import {makeAutoObservable, runInAction} from 'mobx';
 import { FIREBASE_AUTH } from "../config/firebase.config";
 import {
     deleteUser,
@@ -15,7 +15,7 @@ import { userStore } from "./UserStore";
 import { commonStore } from "./CommonStore";
 
 class AuthenticationStore {
-    user = {};
+    loggedInUser = {}
     name = '';
     email = '';
     password = '';
@@ -48,17 +48,21 @@ class AuthenticationStore {
         this.handleChangeAuthenticationStore('password', password)
         commonStore.handleCommonStore('isLoading', true)
         signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
-            .then((response) => {
-                this.handleChangeAuthenticationStore('user', {...response.user, password})
-                this.handleChangeAuthenticationStore('isSignedIn', true)
-                this.handleChangeAuthenticationStore('signInFailed', false)
+            .then( async (response) => {
+                runInAction(() => {
+                    this.loggedInUser = {...response.user, password};
+                    this.isSignedIn = true;
+                    this.signInFailed = false;
+                })
                 return response;
             })
             .catch((error) => {
                 console.log('error', error)
-                this.handleChangeAuthenticationStore('signInFailed', true)
-                this.handleChangeAuthenticationStore('isSignedIn', false)
-                this.handleChangeAuthenticationStore('errorMessage', this.ERRORS[error.code])
+                runInAction(() => {
+                    this.signInFailed = true;
+                    this.isSignedIn = false;
+                    this.errorMessage = this.ERRORS[error.code];
+                })
             })
             .finally(() =>{
                 console.log('signed in')
@@ -77,16 +81,20 @@ class AuthenticationStore {
                             setUser(user.uid, new User(user))
                         })
                         .catch((error) => console.log(error))
-                    this.handleChangeAuthenticationStore('signUpFailed', false)
-                    this.handleChangeAuthenticationStore('isSignedIn', true)
+                    runInAction(() => {
+                        this.signUpFailed = false;
+                        this.isSignedIn = true;
+                    })
                 }
                 return user;
             }).catch((error) => {
             console.log(error)
-            this.handleChangeAuthenticationStore('signUpFailed', true)
-            this.handleChangeAuthenticationStore('isSignedIn', false)
-            this.handleChangeAuthenticationStore('isSigningUp', false)
-            this.handleChangeAuthenticationStore('errorMessage', this.ERRORS[error.code])
+            runInAction(() => {
+                this.signUpFailed = true;
+                this.isSignedIn = false;
+                this.isSigningUp = false;
+                this.errorMessage = this.ERRORS[error.code];
+            })
         }).finally(() => {
             this.handleChangeAuthenticationStore('isSigningUp', false)
             commonStore.handleCommonStore('isLoading', false)
@@ -108,11 +116,11 @@ class AuthenticationStore {
     deleteUser = async () => {
         try {
             commonStore.handleCommonStore('isLoading', true)
-            await deleteUser(this.user);
+            await deleteUser(this.loggedInUser);
         } catch (error) {
             if (error.code === 'auth/requires-recent-login') {
-                const credential = EmailAuthProvider.credential(this.user.email, this.password);
-                await reauthenticateWithCredential(this.user, credential)
+                const credential = EmailAuthProvider.credential(this.loggedInUser.email, this.password);
+                await reauthenticateWithCredential(this.loggedInUser, credential)
             }
             console.log('error', error)
         } finally {

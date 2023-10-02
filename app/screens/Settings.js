@@ -4,13 +4,19 @@ import { useNavigation } from '@react-navigation/native';
 import { Modal, Portal, Button, PaperProvider, Text } from 'react-native-paper';
 import { useAuthenticationStore } from "../stores/AuthenticationStore";
 import { observer } from 'mobx-react';
+import {useChildStore} from "../stores/ChildStore";
 
 const Settings = () => {
     const [modalVisible, setModalVisible] = React.useState()
-    const { signOut, deleteUser} = useAuthenticationStore();
+    const { signOut, deleteUser, loggedInUser} = useAuthenticationStore();
     const navigation = useNavigation();
+    const {getChildren} = useChildStore();
     const showModalDelete = () => setModalVisible(true);
     const hideModalDelete = () => setModalVisible(false);
+    const onHandleChildrenProfile = async () => {
+        await getChildren(loggedInUser.uid)
+        navigation.navigate('ChildProfile')
+    }
     return (
         <PaperProvider>
             <Portal>
@@ -28,7 +34,7 @@ const Settings = () => {
                             icon='chevron-right'
                             labelStyle={{ fontFamily: 'OpenSans-Bold', fontSize: 20, color: '#757575' }}
                             contentStyle={{ flexDirection: 'row-reverse', alignSelf: 'flex-start' }}
-                            onPress={() => navigation.navigate('ChildProfile')}>
+                            onPress={() => onHandleChildrenProfile()}>
                             Children Profiles
                         </Button>
                         <Button

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { observer } from "mobx-react";
-import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { PaperProvider, Button, Text, Avatar } from 'react-native-paper';
 import { FormBuilder } from "react-native-paper-form-builder";
 import * as ImagePicker from 'expo-image-picker';
@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const AddChild = ({ userId }) => {
     const { setChild, getChildren } = useChildStore();
-    const { user } = useAuthenticationStore();
+    const { loggedInUser } = useAuthenticationStore();
     const { imageURL, pickImage, handleChangeStorageStore } = useStorageStore();
     const navigation = useNavigation();
 
@@ -29,7 +29,7 @@ const AddChild = ({ userId }) => {
     }, []);
 
     const func = async () => {
-        await getChildren(user.uid)
+        await getChildren(loggedInUser.uid)
     }
 
     const {
@@ -95,7 +95,7 @@ const AddChild = ({ userId }) => {
                         labelStyle={{ fontFamily: 'OpenSans-Bold', fontSize: 16 }}
                         style={{ marginVertical: 20, paddingVertical: 4 }}
                         onPress={handleSubmit(async ({ name }) => {
-                            await setChild(user?.uid, new Child({ name }))
+                            await setChild(loggedInUser?.uid, new Child({ name }))
                             navigation.navigate('ChildProfile')
                         })}>
                         Add

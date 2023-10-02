@@ -1,25 +1,25 @@
+import React, {useEffect} from 'react'
 import { List } from 'react-native-paper';
 import { observer } from "mobx-react";
-import React, {useEffect} from 'react'
 import { SafeAreaView, StyleSheet, StatusBar, View } from 'react-native';
 import {useChildStore} from "../stores/ChildStore";
 import {useAuthenticationStore} from "../stores/AuthenticationStore";
 
 const TopBar = () => {
     const childStore = useChildStore();
-    const authenticationStore = useAuthenticationStore();
-    const {children, child, getChildren} = childStore;
+    const { loggedInUser } = useAuthenticationStore();
+    const {children, child, getChild, getChildren} = childStore;
 
     useEffect(() => {
-        getChildren(authenticationStore.user.uid)
+        getChildren(loggedInUser.uid)
     }, []);
 
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={{ paddingHorizontal: 16, }}>
                 <List.Accordion
-                    id={child.id}
-                    title={child.name}
+                    id={child?.uid}
+                    title={child?.name}
                     titleStyle={{ fontFamily: 'OpenSans-Bold', fontSize: 20, textAlign: 'center', color: '#757575' }}
                     rippleColor='#F5F5F5'
                     style={{ backgroundColor: '#fff' }}
@@ -31,12 +31,13 @@ const TopBar = () => {
                     {
                         children &&
                         children.length > 0 &&
-                        children.map(child => (
+                        children.map(c => (
                             <List.Item
-                                key={child.uid}
-                                title={child.name}
+                                key={c?.uid}
+                                title={c?.name}
                                 left={props => <List.Icon {...props} icon="account-circle" />}
                                 titleStyle={{ fontFamily: 'OpenSans-Bold', fontSize: 20, textAlign: 'center', color: '#757575' }}
+                                onPress={() => getChild(c?.uid)}
                             />
                         ))
 

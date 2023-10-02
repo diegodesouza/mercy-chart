@@ -4,16 +4,15 @@ import { View, StyleSheet } from 'react-native'
 import { Text, PaperProvider, Avatar, IconButton } from 'react-native-paper';
 import { useNavigation } from "@react-navigation/native";
 import { useChildStore } from "../stores/ChildStore";
-import { useAuthenticationStore } from "../stores/AuthenticationStore";
 
 const ChildProfile = () => {
     const navigation = useNavigation();
-    const { getChildren, children } = useChildStore()
-    const { user } = useAuthenticationStore();
+    const { children, getChild } = useChildStore()
 
-    useEffect(() => {
-        getChildren(user.uid);
-    }, []);
+    const onGetChild = async (childId) => {
+        await getChild(childId)
+        navigation.navigate('Home')
+    }
 
     return (
         <PaperProvider>
@@ -35,7 +34,7 @@ const ChildProfile = () => {
                                     <View style={styles.child} key={child.uid}>
                                         <Avatar.Image source={child.avatar !== null ? { uri: child.avatarURL } : require('../../assets/icon.png')} size={26} />
                                         <Text style={styles.profileTxt}>{child.name}</Text>
-                                        <IconButton icon='chevron-right' />
+                                        <IconButton icon='chevron-right' onPress={() => onGetChild(child.uid)} />
                                     </View>
                                 ))
                             }

@@ -11,6 +11,6 @@ export default class Child {
         this.name = init?.name;
         this.userId = init?.userId;
         this.avatarURL = init?.avatarURL
-        this.currentStrikeId = init?.currentStrikeId
+        this.currentStrikeId = init?.currentStrikeId || ''
     }
 }

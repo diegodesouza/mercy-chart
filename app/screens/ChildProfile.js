@@ -12,12 +12,8 @@ const ChildProfile = () => {
     const { user } = useAuthenticationStore();
 
     useEffect(() => {
-        func();
+        getChildren(user.uid);
     }, []);
-
-    const func = async () => {
-        await getChildren(user.uid)
-    }
 
     return (
         <PaperProvider>

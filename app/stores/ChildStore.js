@@ -1,6 +1,7 @@
 import React from 'react';
-import {makeAutoObservable, runInAction} from 'mobx';
+import {makeAutoObservable, runInAction, toJS} from 'mobx';
 import {get, ref, set} from "firebase/database";
+import { collection, setDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import {FIREBASE_DB} from "../config/firebase.config";
 import {storageStore} from './StorageStore'
 import {commonStore} from "./CommonStore";
@@ -18,21 +19,16 @@ class ChildStore {
     getChildren = async (userId) => {
         try {
             commonStore.handleCommonStore('isLoading', true)
-            await get(ref(FIREBASE_DB, 'children'))
-                .then(childrenSnapshot => {
-                    if (Object.values(childrenSnapshot.val()).length > 0) {
-                        runInAction(() => {
-                            this.child = Object.values(childrenSnapshot.val())[0]
-                        })
-                    }
+            const q = query(collection(FIREBASE_DB, "children"), where("userId", "==", userId));
+            const childrenSnapshot = await getDocs(q);
+            childrenSnapshot.forEach((doc) => {
+                const found = this.children.find((child) => child.uid === doc.id);
+                if (!found) {
                     runInAction(() => {
-                        this.children = Object.values(childrenSnapshot.val()).filter(child => {
-                                if (child.userId === userId) {
-                                    return child
-                                }
-                            })
+                        this.children.push(doc.data())
                     })
-                })
+                }
+            });
         } catch (error) {
             console.log('error', error)
         } finally {
@@ -43,7 +39,16 @@ class ChildStore {
     getChild = async (childId) => {
         try {
             commonStore.handleCommonStore('isLoading', true)
-            this.handleChangeChildStore('child' , await get(ref(FIREBASE_DB, `children/${childId}`)))
+            // this.handleChangeChildStore('child' , await get(ref(FIREBASE_DB, `children/${childId}`)))
+            const childrenRef = doc(FIREBASE_DB, 'children', childId);
+            const childrenSnapshot = await getDoc(childrenRef)
+            if (childrenSnapshot.exists()) {
+                console.log("Document data:", childrenSnapshot.data());
+                this.handleChangeChildStore('user', childrenSnapshot.data())
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
         } catch (error) {
             console.log('error', error)
         } finally {
@@ -63,11 +68,14 @@ class ChildStore {
                             userId: userId,
                             avatarURL
                         })
-                        await set(ref(FIREBASE_DB, `children/${child.uid}/`),
-                            { ..._child })
-                            .then(() => {
-                                this.handleChangeChildStore('child', _child)
-                            })
+                        const childRef = doc(FIREBASE_DB, 'children', child.uid);
+                        await setDoc(childRef, Object.assign({}, _child))
+                        this.handleChangeChildStore('currentChildId', childRef.id)
+                        // await set(ref(FIREBASE_DB, `children/${child.uid}/`),
+                        //     { ..._child })
+                        //     .then(() => {
+                        //         this.handleChangeChildStore('child', _child)
+                        //     })
                     }
                 })
         } catch (error) {

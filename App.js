@@ -6,11 +6,11 @@ import { PaperProvider } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { useAuthenticationStore } from "./app/stores/AuthenticationStore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import AuthenticationStackScreen from "./app/stacks/AuthenticationStackScreen";
-import { useCommonStore } from "./app/stores/CommonStore";
-import BottomBar from "./app/components/BottomBar";
+import { useAuthenticationStore } from "./src/stores/AuthenticationStore";
+import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
+import AuthenticationStackScreen from "./src/stacks/AuthenticationStackScreen";
+import { useCommonStore } from "./src/stores/CommonStore";
+import BottomBar from "./src/components/BottomBar";
 
 const App = (props) => {
     const authStore = useAuthenticationStore();

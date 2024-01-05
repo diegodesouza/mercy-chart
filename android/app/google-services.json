@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "796153928232",
+    "project_id": "mercy-chart-40135",
+    "storage_bucket": "mercy-chart-40135.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796153928232:android:268d5bb205bf120612731d",
+        "android_client_info": {
+          "package_name": "com.mercychart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsqkyHJNSwxyI4hpLFvcXQBJU2I4j4-IY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

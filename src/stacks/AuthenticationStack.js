@@ -1,14 +1,14 @@
 import React from "react";
 import {StyleSheet} from "react-native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import SignIn from "../screens/SignIn";
-import SignUp from "../screens/SignUp";
+import SignInScreen from "../screens/SignInScreen";
+import SignUpScreen from "../screens/SignUpScreen";
 
 const Stack = createNativeStackNavigator();
-const AuthenticationStackScreen = () => (
+const AuthenticationStack = () => (
     <Stack.Navigator initialRouteName="SignIn">
-        <Stack.Screen name="SignIn" component={SignIn} options={styles.header} />
-        <Stack.Screen name="SignUp" component={SignUp} options={styles.headerWithNav} />
+        <Stack.Screen name="SignIn" component={SignInScreen} options={styles.header} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} options={styles.headerWithNav} />
     </Stack.Navigator>
 )
 
@@ -31,4 +31,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AuthenticationStackScreen;
+export default AuthenticationStack;

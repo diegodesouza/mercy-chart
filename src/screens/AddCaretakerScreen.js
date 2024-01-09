@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { useNavigation } from '@react-navigation/native';
 
 
-const AddCaretaker = () => {
+const AddCaretakerScreen = () => {
     const navigation = useNavigation();
     const {
         control,
@@ -116,7 +116,7 @@ const AddCaretaker = () => {
     )
 }
 
-export default AddCaretaker
+export default AddCaretakerScreen
 
 const styles = StyleSheet.create({
     root: {

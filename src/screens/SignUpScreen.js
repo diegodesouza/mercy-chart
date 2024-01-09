@@ -7,7 +7,7 @@ import {useForm} from 'react-hook-form';
 import {FormBuilder} from 'react-native-paper-form-builder';
 import TermsOfService from "../components/TermsOfService";
 
-const SignUp = ({ navigation }) => {
+const SignUpScreen = ({ navigation }) => {
     const { signUp, isSigningUp, emailIsAlreadyInUse} = useAuthenticationStore();
 
     const {
@@ -175,7 +175,7 @@ const SignUp = ({ navigation }) => {
     );
 }
 
-export default observer(SignUp)
+export default observer(SignUpScreen)
 
 const styles = StyleSheet.create({
     root: {

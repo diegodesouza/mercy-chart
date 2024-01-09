@@ -15,7 +15,7 @@ class UserStore {
             commonStore.handleCommonStore('isLoading', true);
             return await database().ref('users').once('value');
         } catch (error) {
-            console.log('error', error);
+            console.log('getUsers error', error);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }
@@ -26,7 +26,7 @@ class UserStore {
             commonStore.handleCommonStore('isLoading', true);
             return await database().ref(`users/${userId}`).once('value');
         } catch (error) {
-            console.log('error', error);
+            console.log('getUser error', error);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }
@@ -41,7 +41,7 @@ class UserStore {
                 displayName: user.displayName,
             });
         } catch (error) {
-            console.log('error', error);
+            console.log('setUser error', error);
         } finally {
             console.log('user set');
             commonStore.handleCommonStore('isLoading', false);

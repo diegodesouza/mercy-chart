@@ -4,7 +4,7 @@ import { View, StyleSheet } from 'react-native'
 import { Text, PaperProvider, Avatar, IconButton } from 'react-native-paper';
 import {useNavigation} from "@react-navigation/native";
 
-const CaretakerProfile = () => {
+const CaretakerProfileScreen = () => {
     const navigation = useNavigation();
 
     return (
@@ -37,7 +37,7 @@ const CaretakerProfile = () => {
     )
 }
 
-export default observer(CaretakerProfile);
+export default observer(CaretakerProfileScreen);
 
 const styles = StyleSheet.create({
     root: {

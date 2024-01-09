@@ -5,7 +5,7 @@ import { Modal, Portal, Button, PaperProvider, Text } from 'react-native-paper';
 import { useAuthenticationStore } from "../stores/AuthenticationStore";
 import { observer } from 'mobx-react';
 
-const Settings = () => {
+const SettingsScreen = () => {
     const [modalVisible, setModalVisible] = React.useState()
     const { signOut } = useAuthenticationStore();
     const navigation = useNavigation();
@@ -62,7 +62,7 @@ const Settings = () => {
     );
 }
 
-export default observer(Settings);
+export default observer(SettingsScreen);
 
 const styles = StyleSheet.create({
     root: {

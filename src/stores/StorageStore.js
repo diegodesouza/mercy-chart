@@ -21,7 +21,7 @@ class StorageStore {
         try {
             await task;
         } catch (e) {
-            console.error(e);
+            console.error('uploadImageAsync', e);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }
@@ -42,7 +42,7 @@ class StorageStore {
                 this.handleChangeStorageStore('imageURL', response?.uri);
             }
         } catch (e) {
-            console.log(e);
+            console.log('pickImage error', e);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }

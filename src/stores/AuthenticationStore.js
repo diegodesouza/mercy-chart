@@ -47,7 +47,7 @@ class AuthenticationStore {
                 return response;
             })
             .catch(error => {
-                console.log('error', error);
+                console.log('login error', error);
                 this.handleChangeAuthenticationStore('signInFailed', true);
                 this.handleChangeAuthenticationStore('isSignedIn', false);
                 this.handleChangeAuthenticationStore(
@@ -72,17 +72,17 @@ class AuthenticationStore {
                         .currentUser.updateProfile(user, {displayName: name})
                         .then(() => {
                             setUser(user.uid, new User(user)).catch(error =>
-                                console.log(error),
+                                console.log('setUser error', error),
                             );
                         })
-                        .catch(error => console.log(error));
+                        .catch(error => console.log('updateProfile error', error));
                     this.handleChangeAuthenticationStore('signUpFailed', false);
                     this.handleChangeAuthenticationStore('isSignedIn', true);
                 }
                 return user;
             })
             .catch(error => {
-                console.log(error);
+                console.log('signup error', error);
                 this.handleChangeAuthenticationStore('signUpFailed', true);
                 this.handleChangeAuthenticationStore('isSignedIn', false);
                 this.handleChangeAuthenticationStore('isSigningUp', false);
@@ -104,7 +104,7 @@ class AuthenticationStore {
             this.handleChangeAuthenticationStore('isSignedIn', false);
         } catch (error) {
             this.handleChangeAuthenticationStore('isSignedIn', true);
-            console.log('error', error);
+            console.log('signout error', error);
         } finally {
             console.log('signed out');
         }

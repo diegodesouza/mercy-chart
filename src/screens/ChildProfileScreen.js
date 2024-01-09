@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useChildStore } from "../stores/ChildStore";
 import { useAuthenticationStore } from "../stores/AuthenticationStore";
 
-const ChildProfile = () => {
+const ChildProfileScreen = () => {
     const navigation = useNavigation();
     const { getChildren, children } = useChildStore()
     const { user } = useAuthenticationStore();
@@ -51,7 +51,7 @@ const ChildProfile = () => {
     )
 }
 
-export default observer(ChildProfile);
+export default observer(ChildProfileScreen);
 
 const styles = StyleSheet.create({
     root: {

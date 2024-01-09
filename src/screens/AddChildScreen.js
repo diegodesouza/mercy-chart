@@ -11,7 +11,7 @@ import { useStorageStore } from "../stores/StorageStore";
 import Child from "../stores/models/Child";
 import { useNavigation } from "@react-navigation/native";
 
-const AddChild = ({ userId }) => {
+const AddChildScreen = () => {
     const { setChild, getChildren } = useChildStore();
     const { user } = useAuthenticationStore();
     const { imageURL, pickImage, handleChangeStorageStore } = useStorageStore();
@@ -115,7 +115,7 @@ const AddChild = ({ userId }) => {
     )
 }
 
-export default observer(AddChild)
+export default observer(AddChildScreen)
 
 const styles = StyleSheet.create({
     root: {
@@ -138,6 +138,4 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 30
     },
-
-
 })

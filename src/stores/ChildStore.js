@@ -10,6 +10,8 @@ class ChildStore {
 
     child = {};
 
+    hasChildren = false;
+
     constructor() {
         makeAutoObservable(this);
     }
@@ -17,29 +19,31 @@ class ChildStore {
     getChildren = async userId => {
         try {
             commonStore.handleCommonStore('isLoading', true);
-            await database()
+            return await database()
                 .ref('children')
-                .once('value')
-                .then(childrenSnapshot => {
-                    if (Object.values(childrenSnapshot.val()).length > 0) {
+                .once('value', (childrenSnapshot) => {
+                    if (childrenSnapshot.val() !== null) {
                         runInAction(() => {
                             this.child = Object.values(childrenSnapshot.val())[0];
                             console.log('child is: ', this.child);
+                            this.hasChildren = true
+
+                            this.children = Object.values(childrenSnapshot.val()).filter(
+                                child => {
+                                    if (child.userId === userId) {
+                                        return child;
+                                    }
+                                },
+                            );
+                            console.log('children are: ', this.children);
                         });
                     }
-                    runInAction(() => {
-                        this.children = Object.values(childrenSnapshot.val()).filter(
-                            child => {
-                                if (child.userId === userId) {
-                                    return child;
-                                }
-                            },
-                        );
-                        console.log('children are: ', this.children);
-                    });
-                });
+                })
         } catch (error) {
-            console.log('error', error);
+            console.log('getChildren error', error);
+            runInAction(() => {
+                this.hasChildren = false
+            })
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }
@@ -53,10 +57,10 @@ class ChildStore {
                 await database()
                     .ref(`children/${childId}`)
                     .once('value')
-                    .then(chilSnapshot => chilSnapshot),
+                    .then(childSnapshot => childSnapshot),
             );
         } catch (error) {
-            console.log('error', error);
+            console.log('getChild error', error);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }
@@ -86,7 +90,7 @@ class ChildStore {
                     }
                 });
         } catch (error) {
-            console.log('error', error);
+            console.log('setChild error', error);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }

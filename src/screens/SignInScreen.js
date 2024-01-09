@@ -7,7 +7,7 @@ import { PaperProvider, Button, Text } from 'react-native-paper';
 import { observer } from "mobx-react";
 import { useFonts } from 'expo-font';
 
-const SignIn = ({ navigation }) => {
+const SignInScreen = ({ navigation }) => {
     const [fontsLoaded] = useFonts({
         'OpenSans-Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
         'OpenSans-Bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
@@ -128,7 +128,7 @@ const SignIn = ({ navigation }) => {
     );
 }
 
-export default observer(SignIn);
+export default observer(SignInScreen);
 
 const styles = StyleSheet.create({
     root: {

@@ -31,7 +31,7 @@ class StrikeStore {
                     }
                 });
         } catch (e) {
-            console.log(e);
+            console.log('getStriker error', e);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }
@@ -51,7 +51,7 @@ class StrikeStore {
             );
             await database().ref(`strikes/${childId}`).set(this.strikes);
         } catch (error) {
-            console.log('error', error);
+            console.log('setStrike error', error);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }
@@ -71,7 +71,7 @@ class StrikeStore {
             );
             await database().ref(`strikes/${childId}`).set(this.strikes);
         } catch (error) {
-            console.log('error', error);
+            console.log('deleteStrike error', error);
         } finally {
             commonStore.handleCommonStore('isLoading', false);
         }

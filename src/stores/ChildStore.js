@@ -57,7 +57,7 @@ class ChildStore {
                 await database()
                     .ref(`children/${childId}`)
                     .once('value')
-                    .then(childSnapshot => childSnapshot),
+                    .then(childSnapshot => childSnapshot.val()),
             );
         } catch (error) {
             console.log('getChild error', error);

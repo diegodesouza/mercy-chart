@@ -1,18 +1,12 @@
 import { List } from 'react-native-paper';
 import { observer } from "mobx-react";
-import React, {useEffect} from 'react'
+import React from 'react'
 import { SafeAreaView, StyleSheet, StatusBar, View } from 'react-native';
 import {useChildStore} from "../stores/ChildStore";
-import {useAuthenticationStore} from "../stores/AuthenticationStore";
 
 const TopBar = () => {
     const childStore = useChildStore();
-    const authenticationStore = useAuthenticationStore();
-    const {children, child, getChildren} = childStore;
-
-    useEffect(() => {
-        getChildren(authenticationStore.user.uid)
-    }, []);
+    const {children, child, getChild} = childStore;
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -31,13 +25,16 @@ const TopBar = () => {
                     {
                         children &&
                         children.length > 0 &&
-                        children.map(child => (
-                            <List.Item
-                                key={child.uid}
-                                title={child.name}
-                                left={props => <List.Icon {...props} icon="account-circle" />}
-                                titleStyle={{ fontFamily: 'OpenSans-Bold', fontSize: 20, textAlign: 'center', color: '#757575' }}
-                            />
+                        children
+                            .filter(c => c.uid !== child.uid)
+                            .map(_child => (
+                                <List.Item
+                                    key={_child.uid}
+                                    title={_child.name}
+                                    left={props => <List.Icon {...props} icon="account-circle" />}
+                                    titleStyle={{ fontFamily: 'OpenSans-Bold', fontSize: 20, textAlign: 'center', color: '#757575' }}
+                                    onPress={ async () => await getChild(_child.uid)}
+                                />
                         ))
 
                     }

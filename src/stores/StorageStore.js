@@ -39,7 +39,7 @@ class StorageStore {
             });
 
             if (!response.didCancel) {
-                this.handleChangeStorageStore('imageURL', response?.uri);
+                this.handleChangeStorageStore('imageURL', response?.uri || response.assets?.[0]?.uri);
             }
         } catch (e) {
             console.log('pickImage error', e);
